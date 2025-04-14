@@ -1,0 +1,116 @@
+IPV6 COMMAND 
+1.ipv6 unicast-routing
+ 2.int gig0/1 
+3.ipv6 address 2001:DB8:100::1/64 
+4.no shutdown
+Command for ospf:- 1.ipv6 unicast-routing  
+2.ipv6 router ospf 1 
+3.router-id .... 
+4.exit 5.interface fa 
+5.ipv6 ospf 1 area 0
+access list:- ipv6 traffic-filter BLOCK_HTTP in
+
+--------------IOS IPS------------
+license boot module c1900 technology-package securityk9
+--copy run start
+reload
+mkdir ipsdir
+ip ips config location flash:ipsdir
+ip ips name iosips
+ip ips notify log
+service timestamps log datetime msec--
+logging host 192.168.1.50--
+ip ips signaturecategory--
+category all--
+retired true--
+exit--category 
+ios_ips basic--
+retired false--
+exit--
+exit--
+interface g0/1--
+ip ips iosips out--
+exit-- 
+ip ips signature-definition--
+signature 2004 0--
+status--
+retired false--
+enabled true--
+exit--
+engine--
+event-action produce-alert
+event-action deny-packet-inline
+exit-exit--exit 
+
+-------------Layer 2 Security-------
+spanning-tree vlan 1 root secondary
+[[ SwitchA,B  interface range f0/1-4 
+spanning-tree portfast--
+interface range f0/1-4
+spanning-tree portfast:--:
+interface range f0/1 - 4
+spanning-tree bpduguard enable--
+interface range f0/1 - 4 
+spanning-tree bpduguard enable ]]]---
+[[Switch1,2  interface range f0/23 - 24
+spanning-tree guard root--
+interface range f0/23 - 24
+spanning-tree guard root------  
+[[[ Switch a,b disable unusedport disble    
+interface range f0/1 - 22 
+switchport mode access-
+switchport port-security- 
+switchport port-security maximum 2
+-switchport port-security violation shutdown- 
+switchport port-security mac-address sticky
+-interface range f0/1 - 22-
+switchport mode access-
+switchport port-security-
+switchport port-security maximum 2-
+switchport port-security violation shutdown-
+switchport port-security mac-address sticky-]]]  
+show port-security interface f0/1   -----
+Disable unused ports..
+interface range f0/5 - 22-
+shutdown----- interface range f0/5 - 22- 
+shutdown 
+
+--------------- AAA Authentication----------------------
+username Admin1 secret admin1pa55---aaa new-model--- aaa authentication login default local---line console 0===login authentication default=== end=exit[ for ssh ]  ip domain-name ccnasecurity.com===crypto key generate rsa===aaa authentication login SSH-LOGIN local=== line vty 0 4== login authentication SSH-LOGIN==transport input ssh=end .
+TACACS+tacacs-server host 192.168.2.2==tacacs-server key tacacspa55=== aaa new-model== aaa authentication login default group tacacs+ local==line console 0===login authentication default= end
+logging host 192.168.1.6==service timestamps log datetime msec
+
+
+--------------------zone-based firewall configuration-------------
+config t--class-map type inspect match-any mandar-map--
+match protocol icmp--
+exit--policy-map type inspect mandar-policy--
+class type inspect mandar-map--
+inspect--
+end--
+config t--zone security inside--
+exit--
+zone security outside--
+exit--
+zone-pair security secure source inside destination outside---
+service-policy type inspect mandar-policy--
+end--
+config t--
+interface range fa0/0-1--
+zone-member security inside--
+exit--
+interface se0/1/0--
+zone-member security outside
+exit---
+config t--interface fa0/1--
+zone-member outside--
+exit--
+zone-member security outside--
+exit--
+interface se0/3/0--
+zone-member security inside--
+exit
+
+-------------------Vlan----------
+interface vlan 20--ip address 192.168.20.5 255.255.255.0      interface g0/0.3---encapsulation dot1q 20 exit--  interface g0/0.3-ip address 192.168.20.100 255.255.255.0
+
